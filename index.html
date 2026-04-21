@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dog Whipper 3000 (it's a joke)</title>
+  <style>
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .scene {
+      width: 100vw; height: 100vh;
+      position: relative;
+      perspective: 1000px;
+    }
+
+    /* Ceiling */
+    .ceiling {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 50%;
+      background: linear-gradient(to bottom, #c0a882 0%, #d4bb96 100%);
+    }
+
+    /* Side walls - left & right trapezoids */
+    .wall-left {
+      position: absolute;
+      top: 0; left: 0;
+      width: 18%; height: 100%;
+      background: linear-gradient(to right, #8a6e4a, #b99a72);
+      clip-path: polygon(0 0, 100% 20%, 100% 80%, 0 100%);
+    }
+    .wall-right {
+      position: absolute;
+      top: 0; right: 0;
+      width: 18%; height: 100%;
+      background: linear-gradient(to left, #8a6e4a, #b99a72);
+      clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 80%);
+    }
+
+    /* Back wall */
+    .back-wall {
+      position: absolute;
+      top: 18%; left: 18%;
+      width: 64%; height: 64%;
+      background: #c9aa80;
+    }
+    /* Painting on back wall */
+   
+
+
+    /* Floor */
+    .floor {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 50%;
+      background: linear-gradient(to bottom, #7a5a2a 0%, #4a360f 100%);
+      overflow: hidden;
+    }
+    
+
+    /* Horizon line */
+
+
+    /* ── DOG ── */
+    #dog {
+      position: absolute;
+      
+      top: 48%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 170px; height: 170px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-drag: none;
+      filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6));
+      transition: filter 0.05s;
+      z-index: 10;
+    }
+    #dog:hover { filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6)) brightness(1.15); }
+    #dog.shake { animation: dogShake 0.22s ease; }
+
+    @keyframes dogShake {
+      0%   { transform: translate(-50%, -50%) rotate(0deg)   scale(1);    }
+      12%  { transform: translate(-44%, -55%) rotate(-12deg) scale(1.10); }
+      28%  { transform: translate(-56%, -45%) rotate(12deg)  scale(0.93); }
+      44%  { transform: translate(-45%, -54%) rotate(-8deg)  scale(1.06); }
+      60%  { transform: translate(-55%, -46%) rotate(8deg)   scale(0.97); }
+      78%  { transform: translate(-48%, -51%) rotate(-3deg);               }
+      100% { transform: translate(-50%, -50%) rotate(0deg)   scale(1);    }
+    }
+
+    /* ── WHIP ARM ── */
+    #whip-arm {
+      position: absolute;
+      mix-blend-mode:multiply;
+      bottom: 0; left: 0;
+      width: 220px; height: 320px;
+      transform-origin: bottom left;
+      pointer-events: none;
+      z-index: 20;
+    }
+    #whip-arm.swing { animation: whipSwing 0.28s cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+    @keyframes whipSwing {
+      0%   { transform: rotate(0deg)    rotateY(0deg)   rotateX(0deg);  }
+      18%  { transform: rotate(48deg)   rotateY(-20deg) rotateX(12deg) translateX(15px); }
+      40%  { transform: rotate(70deg)   rotateY(-38deg) rotateX(22deg) translateX(35px) translateY(-15px); }
+      65%  { transform: rotate(28deg)   rotateY(-10deg) rotateX(6deg)  translateX(10px); }
+      100% { transform: rotate(0deg)    rotateY(0deg)   rotateX(0deg);  }
+    }
+
+    /* ── HUD ── */
+    .hud-text {
+      position: absolute;
+      top: 18px; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,240,0.85);
+      font-family: 'Special Elite', serif;
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      text-shadow: 1px 2px 6px rgba(0,0,0,0.9);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .counter {
+      position: absolute;
+      top: 14px; right: 22px;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,220,130,0.3);
+      color: #f5d77a;
+      font-family: 'Pirata One', cursive;
+      font-size: 22px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      text-shadow: 0 0 8px rgba(245,215,122,0.6);
+      pointer-events: none;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 16px; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.35);
+      font-family: 'Special Elite', serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    /* Crack flash on dog click */
+    .crack-flash {
+      position: absolute;
+      top: 48%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,240,100,0.9) 0%, rgba(255,180,0,0.4) 50%, transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 15;
+    }
+    .crack-flash.pop { animation: crackPop 0.18s ease-out forwards; }
+
+    @keyframes crackPop {
+      0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.2); }
+      50%  { opacity: 0.9; transform: translate(-50%, -50%) scale(1.4); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+    }
+  </style>
+</head>
+<body>
+    
+<div class="scene">
+
+  <!-- Ceiling -->
+  <div class="ceiling"></div>
+
+  <!-- Back wall + painting -->
+  <div class="back-wall">
+    <div class="painting"></div>
+  </div>
+
+  <!-- Side walls -->
+  <div class="wall-left"></div>
+  <div class="wall-right"></div>
+
+  <!-- Floor with perspective planks -->
+  <div class="floor">
+    <svg class="floor-svg" viewBox="0 0 100 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    </svg>
+  </div>
+
+  <div class="crack-flash" id="flash"></div>
+
+  <img id="dog"
+       src='dog.png'
+       alt="dog"
+       draggable="false" />
+
+  <div id="whip-arm">
+    <img src = 'Whip hand.jpeg' width="400"/>
+  </div>
+
+  <!-- HUD -->
+  <div class="hud-text">You are standing in a room. There is a dog in front of you.</div>
+  <div class="counter">🐾 <span id="count">0</span></div>
+  <div class="hint">click the dog</div>
+
+</div>
+
+<script>
+  let sound = new Audio('howl.mp3')
+  let sound2 = new Audio('whip crack.mp3')
+  const dog   = document.getElementById('dog');
+  const arm   = document.getElementById('whip-arm');
+  const flash = document.getElementById('flash');
+  const count = document.getElementById('count');
+  let n = 0;
+
+  dog.addEventListener('click', () => {
+    n++;
+    count.textContent = n;
+    
+
+    // Re-trigger whip swing
+    arm.classList.remove('swing');
+    void arm.offsetWidth;
+    arm.classList.add('swing');
+
+    // Re-trigger dog shake
+    dog.classList.remove('shake');
+    void dog.offsetWidth;
+    dog.classList.add('shake');
+
+    // Crack flash
+    flash.classList.remove('pop');
+    void flash.offsetWidth;
+    flash.classList.add('pop');
+    sound.currentTime = 0.5;
+    sound.play()
+    sound2.currentTime = .9;
+    sound2.play()
+    
+
+
+  });
+
+  arm.addEventListener('animationend',   () => arm.classList.remove('swing'));
+  dog.addEventListener('animationend',   () => dog.classList.remove('shake'));
+  flash.addEventListener('animationend', () => flash.classList.remove('pop'));
+</script>
+</body>
+</html>
