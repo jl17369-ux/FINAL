@@ -106,7 +106,7 @@
       100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
     }
 
-    /* ── WHIP ARM ── */
+    /* ── POINTING ARM ── */
     #whip-arm {
       position: absolute;
       mix-blend-mode:multiply;
@@ -116,14 +116,15 @@
       pointer-events: none;
       z-index: 20;
     }
-    #whip-arm.swing { animation: whipSwing 0.28s cubic-bezier(0.22, 0.61, 0.36, 1); }
+    #whip-arm.swing { animation: whipSwing 0.42s cubic-bezier(0.22, 0.61, 0.36, 1); }
 
     @keyframes whipSwing {
-      0%   { transform: rotate(0deg)    rotateY(0deg)   rotateX(0deg);  }
-      18%  { transform: rotate(48deg)   rotateY(-20deg) rotateX(12deg) translateX(15px); }
-      40%  { transform: rotate(70deg)   rotateY(-38deg) rotateX(22deg) translateX(35px) translateY(-15px); }
-      65%  { transform: rotate(28deg)   rotateY(-10deg) rotateX(6deg)  translateX(10px); }
-      100% { transform: rotate(0deg)    rotateY(0deg)   rotateX(0deg);  }
+      0%   { transform: rotate(-100deg)    rotateY(-100deg)   rotateX(-100deg)   translateX(0)    translateY(0); }
+      22%  { transform: rotate(12deg)   rotateY(-5deg)  rotateX(4deg)   translateX(18px) translateY(-4px); }
+      48%  { transform: rotate(0deg)   rotateY(-10deg) rotateX(8deg)   translateX(30px) translateY(-22px); }
+      72%  { transform: rotate(30deg)   rotateY(-11deg) rotateX(9deg)   translateX(74px) translateY(-28px); }
+      84%  { transform: rotate(50deg)   rotateY(-10deg) rotateX(8deg)   translateX(70px) translateY(-26px); }
+      100% { transform: rotate(0deg)    rotateY(0deg)   rotateX(0deg)   translateX(0)    translateY(0); }
     }
 
     /* ── RIGHT PETTING HAND ── */
@@ -384,11 +385,11 @@
         width = '50%'/>
 
   <div id="whip-arm">
-    <img src = 'Whip hand.jpeg' width="60%"/>
+    <img src = 'point.jpg' width="60%"/>
   </div>
 
   <div id="pet-hand">
-    <img src="hand.jpg" width="20%" />
+    <img src="pet.jpg" width="20%" />
   </div>
 
   <!-- HUD -->
