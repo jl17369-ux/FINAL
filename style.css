@@ -245,29 +245,27 @@ html, body {
 .meter-label.left { left: 62px; }
 .meter-label.right { right: 62px; }
 
-.hint {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.35);
-  font-family: 'Special Elite', serif;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
-.countdown {
+.instruction-box {
   position: absolute;
   top: 90px;
   left: 50%;
   transform: translateX(-50%);
-  min-width: 180px;
-  padding: 10px 18px;
+  min-width: 240px;
+  padding: 14px 20px 12px;
   border: 2px solid rgba(255,255,255,0.22);
-  border-radius: 999px;
+  border-radius: 18px;
   background: rgba(0,0,0,0.45);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.28);
+  text-align: center;
+  pointer-events: none;
+  z-index: 27;
+  transition: opacity 0.25s ease;
+}
+
+.instruction-box.hidden { opacity: 0; }
+
+.countdown {
+  margin-bottom: 18px;
   color: rgba(255,255,255,0.92);
   font-family: 'Special Elite', serif;
   font-size: 18px;
@@ -275,12 +273,16 @@ html, body {
   text-align: center;
   text-transform: uppercase;
   text-shadow: 1px 2px 5px rgba(0,0,0,0.8);
-  pointer-events: none;
-  z-index: 27;
-  transition: opacity 0.25s ease;
 }
 
-.countdown.hidden { opacity: 0; }
+.hint {
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: 'Special Elite', serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
 .hp-wrap {
   position: absolute;

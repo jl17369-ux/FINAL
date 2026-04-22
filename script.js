@@ -16,6 +16,7 @@ const whipMeter = document.getElementById('whip-meter');
 const petMeter = document.getElementById('pet-meter');
 const hpFill = document.getElementById('hp-fill');
 const countdown = document.getElementById('countdown');
+const instructionBox = document.getElementById('instruction-box');
 const deathScreen = document.getElementById('death-screen');
 let whipLevel = 50;
 let petLevel = 50;
@@ -90,7 +91,7 @@ function startDecayLoop() {
 
   decayStarted = true;
   countdownActive = false;
-  countdown.classList.add('hidden');
+  instructionBox.classList.add('hidden');
   decayInterval = window.setInterval(() => {
     whipLevel = Math.max(0, whipLevel - decayPerTick);
     petLevel = Math.max(0, petLevel - decayPerTick);
