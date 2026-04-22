@@ -43,6 +43,7 @@ const poisonTickMs = 400;
 const decayCountdownSeconds = 3;
 const zeroDisciplinePoopCooldownMs = 900;
 const zeroHappinessLungeCooldownMs = 1200;
+const poopClicksToClean = 3;
 
 function renderMeters() {
   whipMeter.style.height = `${whipLevel}%`;
@@ -168,6 +169,7 @@ function spawnPoop() {
   const poop = document.createElement('span');
   poop.className = 'poop';
   poop.textContent = '💩';
+  poop.dataset.cleanProgress = '0';
   poop.style.left = `${15 + Math.random() * 70}%`;
   poop.style.top = `${54 + Math.random() * 28}%`;
   poop.style.fontSize = `${28 + Math.random() * 44}px`;
@@ -177,10 +179,15 @@ function spawnPoop() {
 
 function cleanPoop() {
   const poops = poopLayer.querySelectorAll('.poop');
-  const removeCount = Math.max(1, Math.ceil(poops.length / 3));
+  if (poops.length === 0) return;
 
-  for (let i = 0; i < removeCount && i < poops.length; i++) {
-    poops[i].remove();
+  const targetPoop = poops[0];
+  const nextProgress = Number(targetPoop.dataset.cleanProgress || '0') + 1;
+
+  if (nextProgress >= poopClicksToClean) {
+    targetPoop.remove();
+  } else {
+    targetPoop.dataset.cleanProgress = String(nextProgress);
   }
 
   renderHp();
