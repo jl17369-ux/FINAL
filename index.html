@@ -87,6 +87,7 @@
     #dog:hover { filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6)) brightness(1.15); }
     #dog.shake { animation: dogShake 0.22s ease; }
     #dog.petted { animation: dogHappy 0.6s ease; }
+    #dog.lunge { animation: dogLunge 0.4s cubic-bezier(0.18, 0.84, 0.22, 1); }
 
     @keyframes dogShake {
       0%   { transform: translate(-50%, -50%) rotate(0deg)   scale(1);    }
@@ -104,6 +105,25 @@
       45%  { transform: translate(-50%, -49%) rotate(2deg) scale(1.05); }
       70%  { transform: translate(-50%, -50.8%) rotate(-1deg) scale(1.02); }
       100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    }
+
+    @keyframes dogLunge {
+      0% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6));
+      }
+      16% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(-2deg);
+        filter: drop-shadow(0 8px 14px rgba(0,0,0,0.46));
+      }
+      58% {
+        transform: translate(-50%, -45%) scale(3.35) rotate(2.5deg);
+        filter: drop-shadow(0 42px 42px rgba(0,0,0,0.44));
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6));
+      }
     }
 
     /* ── POINTING ARM ── */
@@ -236,6 +256,122 @@
       pointer-events: none;
     }
 
+    .countdown {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 180px;
+      padding: 10px 18px;
+      border: 2px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      background: rgba(0,0,0,0.45);
+      color: rgba(255,255,255,0.92);
+      font-family: 'Special Elite', serif;
+      font-size: 18px;
+      letter-spacing: 0.14em;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow: 1px 2px 5px rgba(0,0,0,0.8);
+      pointer-events: none;
+      z-index: 27;
+      transition: opacity 0.25s ease;
+    }
+
+    .countdown.hidden {
+      opacity: 0;
+    }
+
+    .hp-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: 44px;
+      transform: translateX(-50%);
+      width: min(420px, 58vw);
+      pointer-events: none;
+      z-index: 26;
+    }
+
+    .goal-text {
+      margin-bottom: 12px;
+      text-align: center;
+      color: rgba(255,255,255,0.8);
+      font-family: 'Special Elite', serif;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 1px 2px 5px rgba(0,0,0,0.75);
+    }
+
+    .hp-label {
+      margin-bottom: 8px;
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+      font-family: 'Special Elite', serif;
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-shadow: 1px 2px 5px rgba(0,0,0,0.8);
+    }
+
+    .hp-bar {
+      height: 24px;
+      background: rgba(18,18,18,0.72);
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.45), 0 8px 18px rgba(0,0,0,0.28);
+    }
+
+    .hp-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, #7d0707 0%, #dc2c2c 55%, #ffb36a 100%);
+      box-shadow: 0 0 20px rgba(255, 72, 72, 0.35);
+      transition: width 0.2s ease-out;
+    }
+
+    .hp-fill.poisoned {
+      background: linear-gradient(to right, #0f5a18 0%, #2ac446 55%, #a6ff81 100%);
+      box-shadow: 0 0 20px rgba(86, 255, 122, 0.4);
+    }
+
+    .death-screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0);
+      color: rgba(255, 255, 255, 0);
+      font-family: 'Special Elite', serif;
+      font-size: clamp(44px, 9vw, 110px);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-shadow: 0 0 24px rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+      z-index: 40;
+      transition: background 1s ease, color 0.8s ease;
+    }
+
+    .death-screen.show {
+      background: rgba(0, 0, 0, 0.96);
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .death-screen.ready {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .death-subtext {
+      font-size: clamp(14px, 2vw, 22px);
+      letter-spacing: 0.12em;
+      opacity: 0.84;
+    }
+
     /* Crack flash on dog click */
     .crack-flash {
       position: absolute;
@@ -349,6 +485,37 @@
         transform: translate(calc(-50% + var(--drift-x, 0px)), calc(-82px + var(--drift-y, 0px))) scale(1.14);
       }
     }
+
+    .poop-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 11;
+    }
+
+    .poop {
+      position: absolute;
+      font-size: 42px;
+      line-height: 1;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.35));
+      animation: poopDrop 0.45s cubic-bezier(0.21, 0.84, 0.32, 1.1);
+    }
+
+    @keyframes poopDrop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -90px) scale(0.55) rotate(-14deg);
+      }
+      65% {
+        opacity: 1;
+        transform: translate(-50%, -20px) scale(1.08) rotate(8deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      }
+    }
   </style>
 </head>
 <body>
@@ -377,6 +544,7 @@
   <div class="pet-glow" id="pet-flash"></div>
   <div class="heart-layer" id="heart-layer"></div>
   <div class="anger-layer" id="anger-layer"></div>
+  <div class="poop-layer" id="poop-layer"></div>
 
   <img id="dog"
        src='dog.png'
@@ -403,14 +571,30 @@
     <div class="meter-fill pet" id="pet-meter"></div>
   </div>
 
+  <div class="hp-wrap">
+    <div class="goal-text">Keep both bars balanced near the middle</div>
+    <div class="hp-label">HP</div>
+    <div class="hp-bar">
+      <div class="hp-fill" id="hp-fill"></div>
+    </div>
+  </div>
+
+  <div class="countdown" id="countdown">Click to start</div>
   <div class="hint">left click or right click the dog</div>
+  <div class="death-screen" id="death-screen">
+    <div>YOU DIED</div>
+    <div class="death-subtext">Click to restart</div>
+  </div>
 
 </div>
 
 <script>
+  const normalDogSrc = 'dog.png';
+  const aggressiveDogSrc = 'aggresssive dog.webp';
   let sound = new Audio('howl.mp3')
-  let sound2 = new Audio('whip crack.mp3')
+  let sound2 = new Audio('baddog.wav')
   let sound3 = new Audio('puppy.wav')
+  let roarSound = new Audio('roar.wav')
   const dog   = document.getElementById('dog');
   const arm   = document.getElementById('whip-arm');
   const petHand = document.getElementById('pet-hand');
@@ -418,18 +602,128 @@
   const petFlash = document.getElementById('pet-flash');
   const heartLayer = document.getElementById('heart-layer');
   const angerLayer = document.getElementById('anger-layer');
+  const poopLayer = document.getElementById('poop-layer');
   const whipMeter = document.getElementById('whip-meter');
   const petMeter = document.getElementById('pet-meter');
-  let whipLevel = 0;
-  let petLevel = 0;
+  const hpFill = document.getElementById('hp-fill');
+  const countdown = document.getElementById('countdown');
+  const deathScreen = document.getElementById('death-screen');
+  let whipLevel = 50;
+  let petLevel = 50;
+  let hpLevel = 100;
+  let isLunging = false;
+  let isDead = false;
+  let canRestart = false;
+  let decayStarted = false;
+  let gameStarted = false;
+  let countdownActive = false;
+  let deathReloadTimer = null;
+  let deathClickEnableTimer = null;
+  let countdownTimer = null;
+  let decayInterval = null;
+  let lastZeroDisciplinePoopAt = 0;
+  let lastZeroHappinessLungeAt = 0;
   const maxMeter = 100;
   const whipStep = 18;
   const petStep = 18;
+  const lungeDamage = 25;
   const decayPerTick = 2;
+  const poisonDamagePerPoop = 0.25;
+  const poisonTickMs = 400;
+  const decayCountdownSeconds = 3;
+  const zeroDisciplinePoopCooldownMs = 900;
+  const zeroHappinessLungeCooldownMs = 1200;
 
   function renderMeters() {
     whipMeter.style.height = `${whipLevel}%`;
     petMeter.style.height = `${petLevel}%`;
+  }
+
+  function renderHp() {
+    hpFill.style.width = `${hpLevel}%`;
+    hpFill.classList.toggle('poisoned', poopLayer.querySelectorAll('.poop').length > 0 && !isDead);
+  }
+
+  function applyPoisonDamage() {
+    if (isDead) return;
+
+    const poopCount = poopLayer.querySelectorAll('.poop').length;
+    if (poopCount === 0) return;
+
+    hpLevel = Math.max(0, hpLevel - (poisonDamagePerPoop * poopCount));
+    renderHp();
+
+    if (hpLevel === 0) {
+      triggerDeath();
+    }
+  }
+
+  function restartGame() {
+    window.location.reload();
+  }
+
+  function triggerDeath() {
+    if (isDead) return;
+
+    isDead = true;
+    isLunging = true;
+    canRestart = false;
+    deathScreen.classList.add('show');
+    deathClickEnableTimer = window.setTimeout(() => {
+      canRestart = true;
+      deathScreen.classList.add('ready');
+    }, 2000);
+    deathReloadTimer = window.setTimeout(restartGame, 4000);
+  }
+
+  function startDecayLoop() {
+    if (decayStarted) return;
+
+    decayStarted = true;
+    countdownActive = false;
+    countdown.classList.add('hidden');
+    decayInterval = window.setInterval(() => {
+      whipLevel = Math.max(0, whipLevel - decayPerTick);
+      petLevel = Math.max(0, petLevel - decayPerTick);
+      renderMeters();
+
+      const now = Date.now();
+
+      if (whipLevel === 0 && now - lastZeroDisciplinePoopAt >= zeroDisciplinePoopCooldownMs) {
+        lastZeroDisciplinePoopAt = now;
+        spawnPoop();
+      }
+
+      if (petLevel === 0 && now - lastZeroHappinessLungeAt >= zeroHappinessLungeCooldownMs) {
+        lastZeroHappinessLungeAt = now;
+        triggerDogLunge();
+      }
+    }, 60);
+  }
+
+  function startDecayCountdown() {
+    if (gameStarted) return;
+
+    gameStarted = true;
+    countdownActive = true;
+    let secondsLeft = decayCountdownSeconds;
+    countdown.textContent = `Decay in ${secondsLeft}`;
+
+    countdownTimer = window.setInterval(() => {
+      secondsLeft -= 1;
+
+      if (secondsLeft > 0) {
+        countdown.textContent = `Decay in ${secondsLeft}`;
+        return;
+      }
+
+      window.clearInterval(countdownTimer);
+      countdownTimer = null;
+      countdown.textContent = 'Go!';
+      window.setTimeout(() => {
+        startDecayLoop();
+      }, 250);
+    }, 1000);
   }
 
   function spawnHearts() {
@@ -460,9 +754,58 @@
     }
   }
 
+  function spawnPoop() {
+    const poop = document.createElement('span');
+    poop.className = 'poop';
+    poop.textContent = '💩';
+    poop.style.left = `${15 + Math.random() * 70}%`;
+    poop.style.top = `${54 + Math.random() * 28}%`;
+    poop.style.fontSize = `${28 + Math.random() * 44}px`;
+    poopLayer.appendChild(poop);
+    renderHp();
+  }
+
+  function cleanPoop() {
+    const poops = poopLayer.querySelectorAll('.poop');
+    const removeCount = Math.max(1, Math.ceil(poops.length / 3));
+
+    for (let i = 0; i < removeCount && i < poops.length; i++) {
+      poops[i].remove();
+    }
+
+    renderHp();
+  }
+
+  function triggerDogLunge() {
+    if (isLunging || isDead) return;
+
+    isLunging = true;
+    hpLevel = Math.max(0, hpLevel - lungeDamage);
+    renderHp();
+    dog.src = aggressiveDogSrc;
+    dog.classList.remove('lunge');
+    void dog.offsetWidth;
+    dog.classList.add('lunge');
+    roarSound.currentTime = 0;
+    roarSound.play();
+
+    if (hpLevel === 0) {
+      triggerDeath();
+    }
+  }
+
   dog.addEventListener('click', () => {
+    if (!gameStarted) {
+      startDecayCountdown();
+      return;
+    }
+
+    if (countdownActive || isLunging || isDead) return;
+
+    const wasFull = whipLevel >= maxMeter;
     whipLevel = Math.min(maxMeter, whipLevel + whipStep);
     renderMeters();
+    cleanPoop();
     
 
     // Re-trigger whip swing
@@ -475,6 +818,10 @@
     void dog.offsetWidth;
     dog.classList.add('shake');
 
+    if (!wasFull && whipLevel >= maxMeter) {
+      triggerDogLunge();
+    }
+
     // Crack flash
     flash.classList.remove('pop');
     void flash.offsetWidth;
@@ -482,7 +829,7 @@
     spawnAnger();
     sound.currentTime = 0.5;
     sound.play()
-    sound2.currentTime = .9;
+    sound2.currentTime = 0;
     sound2.play()
     
 
@@ -491,8 +838,20 @@
 
   dog.addEventListener('contextmenu', (event) => {
     event.preventDefault();
+    if (!gameStarted) {
+      startDecayCountdown();
+      return;
+    }
+
+    if (countdownActive || isLunging || isDead) return;
+
+    const wasFull = petLevel >= maxMeter;
     petLevel = Math.min(maxMeter, petLevel + petStep);
     renderMeters();
+
+    if (!wasFull && petLevel >= maxMeter) {
+      spawnPoop();
+    }
 
     petHand.classList.remove('pet');
     void petHand.offsetWidth;
@@ -515,16 +874,42 @@
   dog.addEventListener('animationend',   () => dog.classList.remove('shake'));
   petHand.addEventListener('animationend', () => petHand.classList.remove('pet'));
   dog.addEventListener('animationend',   () => dog.classList.remove('petted'));
+  dog.addEventListener('animationend', () => {
+    dog.classList.remove('lunge');
+    dog.src = normalDogSrc;
+    if (!isDead) {
+      isLunging = false;
+    }
+  });
+  deathScreen.addEventListener('click', () => {
+    if (!isDead || !canRestart) return;
+
+    if (deathReloadTimer !== null) {
+      window.clearTimeout(deathReloadTimer);
+      deathReloadTimer = null;
+    }
+
+    if (deathClickEnableTimer !== null) {
+      window.clearTimeout(deathClickEnableTimer);
+      deathClickEnableTimer = null;
+    }
+
+    restartGame();
+  });
   flash.addEventListener('animationend', () => flash.classList.remove('pop'));
   petFlash.addEventListener('animationend', () => petFlash.classList.remove('pop'));
 
   setInterval(() => {
-    whipLevel = Math.max(0, whipLevel - decayPerTick);
-    petLevel = Math.max(0, petLevel - decayPerTick);
-    renderMeters();
-  }, 60);
+    applyPoisonDamage();
+  }, poisonTickMs);
 
   renderMeters();
+  renderHp();
+  document.addEventListener('click', () => {
+    if (!gameStarted) {
+      startDecayCountdown();
+    }
+  }, { once: true });
 </script>
 </body>
 </html>
