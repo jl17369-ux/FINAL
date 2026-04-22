@@ -86,6 +86,7 @@
     }
     #dog:hover { filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6)) brightness(1.15); }
     #dog.shake { animation: dogShake 0.22s ease; }
+    #dog.petted { animation: dogHappy 0.6s ease; }
 
     @keyframes dogShake {
       0%   { transform: translate(-50%, -50%) rotate(0deg)   scale(1);    }
@@ -97,12 +98,20 @@
       100% { transform: translate(-50%, -50%) rotate(0deg)   scale(1);    }
     }
 
+    @keyframes dogHappy {
+      0%   { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+      20%  { transform: translate(-50%, -51.5%) rotate(-3deg) scale(1.03); }
+      45%  { transform: translate(-50%, -49%) rotate(2deg) scale(1.05); }
+      70%  { transform: translate(-50%, -50.8%) rotate(-1deg) scale(1.02); }
+      100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    }
+
     /* ── WHIP ARM ── */
     #whip-arm {
       position: absolute;
       mix-blend-mode:multiply;
       bottom: 0; left: 0;
-      width: 220x; height: 320vx;
+      width: 220vx; height: 320vx;
       transform-origin: bottom left;
       pointer-events: none;
       z-index: 20;
@@ -115,6 +124,34 @@
       40%  { transform: rotate(70deg)   rotateY(-38deg) rotateX(22deg) translateX(35px) translateY(-15px); }
       65%  { transform: rotate(28deg)   rotateY(-10deg) rotateX(6deg)  translateX(10px); }
       100% { transform: rotate(0deg)    rotateY(0deg)   rotateX(0deg);  }
+    }
+
+    /* ── RIGHT PETTING HAND ── */
+    #pet-hand {
+      position: absolute;
+      mix-blend-mode: multiply;
+      right: 10%;
+      top: 40%;
+      width: 40%;
+      transform: translate(130px, -15px) rotate(28deg);
+      transform-origin: 88% 18%;
+      pointer-events: none;
+      z-index: 21;
+    }
+    #pet-hand img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    #pet-hand.pet { animation: petDog 0.75s cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+    @keyframes petDog {
+      0%   { transform: translate(130px, -15px) rotate(28deg); }
+      18%  { transform: translate(70px, 0) rotate(12deg); }
+      38%  { transform: translate(15px, 26px) rotate(1deg); }
+      58%  { transform: translate(34px, 12px) rotate(8deg); }
+      78%  { transform: translate(0, 32px) rotate(-2deg); }
+      100% { transform: translate(130px, -15px) rotate(28deg); }
     }
 
     /* ── HUD ── */
@@ -131,19 +168,60 @@
       pointer-events: none;
     }
 
-    .counter {
+    .meter {
       position: absolute;
-      top: 14px; right: 22px;
-      background: rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,220,130,0.3);
-      color: #f5d77a;
-      font-family: 'Pirata One', cursive;
-      font-size: 22px;
-      padding: 6px 14px;
-      border-radius: 6px;
-      text-shadow: 0 0 8px rgba(245,215,122,0.6);
+      top: 54px;
+      width: 42px;
+      height: 150px;
+      background: rgba(10,10,10,0.55);
+      border: 3px solid rgba(255,255,255,0.28);
+      border-radius: 20px;
+      overflow: hidden;
+      pointer-events: none;
+      box-shadow: inset 0 0 24px rgba(0,0,0,0.45), 0 10px 24px rgba(0,0,0,0.3);
+      z-index: 25;
+    }
+    .meter::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent 26%, rgba(255,255,255,0.05));
       pointer-events: none;
     }
+    .meter.left { left: 72px; }
+    .meter.right { right: 72px; }
+
+    .meter-fill {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 0%;
+      transition: height 0.18s ease-out;
+    }
+    .meter-fill.whip {
+      background: linear-gradient(to top, #7d0707 0%, #d31616 60%, #ff7c7c 100%);
+      box-shadow: 0 0 18px rgba(255, 60, 60, 0.4);
+    }
+    .meter-fill.pet {
+      background: linear-gradient(to top, #0d6120 0%, #22ba48 60%, #98f5a0 100%);
+      box-shadow: 0 0 18px rgba(70, 255, 120, 0.35);
+    }
+
+    .meter-label {
+      position: absolute;
+      top: 24px;
+      font-family: 'Special Elite', serif;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.88);
+      text-shadow: 1px 2px 5px rgba(0,0,0,0.8);
+      pointer-events: none;
+      z-index: 25;
+    }
+    .meter-label.left { left: 62px; }
+    .meter-label.right { right: 62px; }
 
     .hint {
       position: absolute;
@@ -176,6 +254,25 @@
       50%  { opacity: 0.9; transform: translate(-50%, -50%) scale(1.4); }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
     }
+
+    .pet-glow {
+      position: absolute;
+      top: 48%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110px; height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,244,196,0.75) 0%, rgba(255,209,102,0.38) 50%, transparent 75%);
+      pointer-events: none;
+      opacity: 0;
+      z-index: 9;
+    }
+    .pet-glow.pop { animation: petGlow 0.45s ease-out forwards; }
+
+    @keyframes petGlow {
+      0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+      25%  { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.28); }
+    }
   </style>
 </head>
 <body>
@@ -201,6 +298,7 @@
   </div>
 
   <div class="crack-flash" id="flash"></div>
+  <div class="pet-glow" id="pet-flash"></div>
 
   <img id="dog"
        src='dog.png'
@@ -212,25 +310,51 @@
     <img src = 'Whip hand.jpeg' width="60%"/>
   </div>
 
+  <div id="pet-hand">
+    <img src="hand.jpg" width="20%" />
+  </div>
+
   <!-- HUD -->
-  <div class="hud-text">You are standing in a room. There is a dog in front of you.</div>
-  <div class="counter">🐾 <span id="count">0</span></div>
-  <div class="hint">click the dog</div>
+  <div class="meter-label left">Discipline</div>
+  <div class="meter left">
+    <div class="meter-fill whip" id="whip-meter"></div>
+  </div>
+
+  <div class="meter-label right">Laziness</div>
+  <div class="meter right">
+    <div class="meter-fill pet" id="pet-meter"></div>
+  </div>
+
+  <div class="hint">left click or right click the dog</div>
 
 </div>
 
 <script>
   let sound = new Audio('howl.mp3')
   let sound2 = new Audio('whip crack.mp3')
+  let sound3 = new Audio('puppy.wav')
   const dog   = document.getElementById('dog');
   const arm   = document.getElementById('whip-arm');
+  const petHand = document.getElementById('pet-hand');
   const flash = document.getElementById('flash');
-  const count = document.getElementById('count');
-  let n = 0;
+  const petFlash = document.getElementById('pet-flash');
+  const whipMeter = document.getElementById('whip-meter');
+  const petMeter = document.getElementById('pet-meter');
+  let whipLevel = 0;
+  let petLevel = 0;
+  const maxMeter = 100;
+  const whipStep = 18;
+  const petStep = 18;
+  const decayPerTick = 2;
+
+  function renderMeters() {
+    whipMeter.style.height = `${whipLevel}%`;
+    petMeter.style.height = `${petLevel}%`;
+  }
 
   dog.addEventListener('click', () => {
-    n++;
-    count.textContent = n;
+    whipLevel = Math.min(maxMeter, whipLevel + whipStep);
+    renderMeters();
     
 
     // Re-trigger whip swing
@@ -256,9 +380,41 @@
 
   });
 
+  dog.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+    petLevel = Math.min(maxMeter, petLevel + petStep);
+    renderMeters();
+
+    petHand.classList.remove('pet');
+    void petHand.offsetWidth;
+    petHand.classList.add('pet');
+
+    dog.classList.remove('petted');
+    void dog.offsetWidth;
+    dog.classList.add('petted');
+
+    petFlash.classList.remove('pop');
+    void petFlash.offsetWidth;
+    petFlash.classList.add('pop');
+    
+    sound3.currentTime=.01;
+    sound3.play();
+  });
+
   arm.addEventListener('animationend',   () => arm.classList.remove('swing'));
   dog.addEventListener('animationend',   () => dog.classList.remove('shake'));
+  petHand.addEventListener('animationend', () => petHand.classList.remove('pet'));
+  dog.addEventListener('animationend',   () => dog.classList.remove('petted'));
   flash.addEventListener('animationend', () => flash.classList.remove('pop'));
+  petFlash.addEventListener('animationend', () => petFlash.classList.remove('pop'));
+
+  setInterval(() => {
+    whipLevel = Math.max(0, whipLevel - decayPerTick);
+    petLevel = Math.max(0, petLevel - decayPerTick);
+    renderMeters();
+  }, 60);
+
+  renderMeters();
 </script>
 </body>
 </html>
