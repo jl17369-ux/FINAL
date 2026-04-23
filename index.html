@@ -35,7 +35,7 @@
   <div class="poop-layer" id="poop-layer"></div>
 
   <img id="dog"
-       src='dog.png'
+       src='placeholder.png'
        alt="dog"
        draggable="false"
         width = '50%'/>
@@ -67,9 +67,16 @@
   </div>
 
   <div class="instruction-box" id="instruction-box">
-    <div class="countdown" id="countdown">Click to start</div>
-    <div class="goal-text">Keep both bars balanced near the middle</div>
-    <div class="hint">left click or right click the dog</div>
+    <div class="countdown" id="countdown">Click on the question mark</div>
+    <div class="selection-status hidden" id="selection-status">Selecting dog...</div>
+    <div class="selection-result instruction-detail hidden" id="selection-result"></div>
+    <div class="diff1 instruction-detail hidden" id="norm">NORMAL MODE</div>
+    <div class="diff2 instruction-detail hidden" id="med">MEDIUM MODE</div>
+    <div class="diff3 instruction-detail hidden" id="hard">HARD MODE</div>
+    <div class="goal-text instruction-detail hidden" id="goal-text">Keep both bars balanced near the middle</div>
+    <div class="hint instruction-detail hidden" id="hint">left click or right click the dog</div>
+
+
   </div>
   <div class="death-screen" id="death-screen">
     <div>YOU DIED</div>

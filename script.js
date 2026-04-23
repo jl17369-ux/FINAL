@@ -1,4 +1,5 @@
-const normalDogSrc = 'dog.png';
+const dogVariants = ['dog.png', 'pitbull.png', 'demon.png'];
+const placeholderDogSrc = 'placeholder.png';
 const aggressiveDogSrc = 'aggresssive dog.webp';
 let sound = new Audio('howl.mp3');
 let sound2 = new Audio('baddog.wav');
@@ -17,12 +18,20 @@ const petMeter = document.getElementById('pet-meter');
 const hpFill = document.getElementById('hp-fill');
 const countdown = document.getElementById('countdown');
 const instructionBox = document.getElementById('instruction-box');
+const selectionStatus = document.getElementById('selection-status');
+const selectionResult = document.getElementById('selection-result');
+const goalText = document.getElementById('goal-text');
+const hint = document.getElementById('hint');
 const deathScreen = document.getElementById('death-screen');
+let normalDogSrc = dogVariants[0];
+dog.src = placeholderDogSrc;
 let whipLevel = 50;
 let petLevel = 50;
 let hpLevel = 100;
 let isLunging = false;
 let isDead = false;
+let isSelectingDog = false;
+let dogSelected = false;
 let canRestart = false;
 let decayStarted = false;
 let gameStarted = false;
@@ -36,14 +45,91 @@ let lastZeroHappinessLungeAt = 0;
 const maxMeter = 100;
 const whipStep = 18;
 const petStep = 18;
-const lungeDamage = 25;
-const decayPerTick = 2;
-const poisonDamagePerPoop = 0.25;
+let lungeDamage = 25;
+let decayPerTick = 2;
+let poisonDamagePerPoop = 0.25;
 const poisonTickMs = 400;
 const decayCountdownSeconds = 3;
 const zeroDisciplinePoopCooldownMs = 900;
 const zeroHappinessLungeCooldownMs = 1200;
 const poopClicksToClean = 3;
+const dogScrollIntervalMs = 120;
+const dogScrollSteps = 9;
+
+function formatDogName(src) {
+  return src
+    .replace(/\.[^.]+$/, '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function playDogShake() {
+  dog.classList.remove('shake');
+  void dog.offsetWidth;
+  dog.classList.add('shake');
+}
+
+function startDogSelectionScroll() {
+  if (isSelectingDog || dogSelected) return;
+
+  isSelectingDog = true;
+  let currentIndex = 0;
+  let stepsRemaining = dogScrollSteps;
+
+  countdown.textContent = 'Selecting dog';
+  dog.src = dogVariants[currentIndex];
+  selectionStatus.classList.remove('hidden');
+  playDogShake();
+
+  const scrollTimer = window.setInterval(() => {
+    currentIndex = (currentIndex + 1) % dogVariants.length;
+    dog.src = dogVariants[currentIndex];
+    playDogShake();
+    stepsRemaining -= 1;
+
+    if (stepsRemaining > 0) return;
+
+    window.clearInterval(scrollTimer);
+    normalDogSrc = dogVariants[Math.floor(Math.random() * dogVariants.length)];
+    dog.src = normalDogSrc;
+    isSelectingDog = false;
+    dogSelected = true;
+    countdown.textContent = 'Click to start';
+    selectionStatus.classList.add('hidden');
+    selectionResult.textContent = `You got ${formatDogName(normalDogSrc)}`;
+    selectionResult.classList.remove('hidden');
+    if(normalDogSrc == 'dog.png'){
+      norm.classList.remove('hidden')
+    }
+    if(normalDogSrc == 'pitbull.png'){
+      med.classList.remove('hidden')
+      decayPerTick = 3;
+      lungeDamage = 34;
+      poisonDamagePerPoop = 0.5;
+    }
+    if(normalDogSrc == 'demon.png'){
+      hard.classList.remove('hidden')
+      decayPerTick = 5;
+      lungeDamage = 50;
+      poisonDamagePerPoop = 1;
+
+    }
+    goalText.classList.remove('hidden');
+    hint.classList.remove('hidden');
+  }, dogScrollIntervalMs);
+}
+
+function handlePreGameStart() {
+  if (gameStarted || countdownActive || isSelectingDog) return false;
+
+  if (!dogSelected) {
+    startDogSelectionScroll();
+    return true;
+  }
+
+  startDecayCountdown();
+  return true;
+}
 
 function renderMeters() {
   whipMeter.style.height = `${whipLevel}%`;
@@ -212,8 +298,7 @@ function triggerDogLunge() {
 }
 
 dog.addEventListener('click', () => {
-  if (!gameStarted) {
-    startDecayCountdown();
+  if (handlePreGameStart()) {
     return;
   }
 
@@ -228,9 +313,7 @@ dog.addEventListener('click', () => {
   void arm.offsetWidth;
   arm.classList.add('swing');
 
-  dog.classList.remove('shake');
-  void dog.offsetWidth;
-  dog.classList.add('shake');
+  playDogShake();
 
   if (!wasFull && whipLevel >= maxMeter) {
     triggerDogLunge();
@@ -248,8 +331,7 @@ dog.addEventListener('click', () => {
 
 dog.addEventListener('contextmenu', (event) => {
   event.preventDefault();
-  if (!gameStarted) {
-    startDecayCountdown();
+  if (handlePreGameStart()) {
     return;
   }
 
@@ -317,9 +399,3 @@ window.setInterval(() => {
 
 renderMeters();
 renderHp();
-
-document.addEventListener('click', () => {
-  if (!gameStarted) {
-    startDecayCountdown();
-  }
-}, { once: true });
